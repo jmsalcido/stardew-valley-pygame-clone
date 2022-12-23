@@ -1,7 +1,7 @@
 import pygame
 
-from timer import Timer
-from support import import_folder
+from src.timer import Timer
+from src.support import import_folder
 
 
 class Player(pygame.sprite.Sprite):

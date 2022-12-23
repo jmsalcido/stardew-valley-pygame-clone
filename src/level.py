@@ -1,7 +1,7 @@
 import pygame
 
-from overlay import Overlay
-from player import Player
+from src.overlay import Overlay
+from src.player import Player
 
 
 class Level:
