@@ -19,13 +19,37 @@ class Player(pygame.sprite.Sprite):
         self.pos = pygame.math.Vector2(self.rect.center)
         self.speed = 200
 
-        self.selected_tool = 'axe'
+        self.tools = ['hoe', 'axe', 'water']
+        self.tool_index = 0
+        self.selected_tool = self.tools[self.tool_index]
         self.timers = {
-            'tool_use': Timer(350, self.use_tool)
+            'tool_use': Timer(350, self.use_tool),
+            'tool_switch': Timer(200, self.switch_tool),
+            'seed_use': Timer(350, self.use_seed),
+            'seed_switch': Timer(200, self.switch_seed)
         }
 
+        self.seeds = ['corn', 'tomato']
+        self.seed_index = 0
+        self.selected_seed = self.seeds[self.seed_index]
+
     def use_tool(self):
-        print(self.selected_tool)
+        pass
+
+    def use_seed(self):
+        print(self.selected_seed)
+
+    def switch_tool(self):
+        self.tool_index += 1
+        if self.tool_index >= len(self.tools):
+            self.tool_index = 0
+        self.selected_tool = self.tools[self.tool_index]
+
+    def switch_seed(self):
+        self.seed_index += 1
+        if self.seed_index >= len(self.seeds):
+            self.seed_index = 0
+        self.selected_seed = self.seeds[self.seed_index]
 
     def update_timers(self):
         for timer in self.timers.values():
@@ -78,6 +102,20 @@ class Player(pygame.sprite.Sprite):
                 self.timers['tool_use'].activate()
                 self.direction = pygame.math.Vector2()
                 self.frame_index = 0
+
+        if keys[pygame.K_LCTRL]:
+            if not self.timers['seed_use'].active:
+                self.timers['seed_use'].activate()
+                self.direction = pygame.math.Vector2()
+                self.frame_index = 0
+
+        if keys[pygame.K_q]:
+            if not self.timers['tool_switch'].active:
+                self.timers['tool_switch'].activate()
+
+        if keys[pygame.K_e]:
+            if not self.timers['seed_switch'].active:
+                self.timers['seed_switch'].activate()
 
     def get_status(self):
         if self.direction.magnitude() == 0:
