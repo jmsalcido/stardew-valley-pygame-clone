@@ -1,6 +1,8 @@
 from os import walk
 import pygame
 
+from src import settings
+
 
 def import_folder(path):
     surface_list = []
@@ -12,3 +14,7 @@ def import_folder(path):
             surface_list.append(image_surface)
 
     return surface_list
+
+
+def game_tile_pos_tuple(x, y):
+    return x * settings.TILE_SIZE, y * settings.TILE_SIZE

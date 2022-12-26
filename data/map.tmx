@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.6" orientation="orthogonal" renderorder="right-down" width="50" height="40" tilewidth="64" tileheight="64" infinite="0" nextlayerid="19" nextobjectid="272">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="50" height="40" tilewidth="64" tileheight="64" infinite="0" nextlayerid="19" nextobjectid="272">
  <tileset firstgid="1" source="Tilesets/Grass.tsx"/>
  <tileset firstgid="81" source="Tilesets/Hills.tsx"/>
  <tileset firstgid="117" source="Tilesets/Fences.tsx"/>
@@ -483,47 +483,47 @@
   <object id="208" name="Small" gid="149" x="670" y="886" width="56" height="116"/>
  </objectgroup>
  <objectgroup id="10" name="Decoration">
-  <object id="139" type="decor" gid="147" x="650.167" y="1025.83" width="56" height="112"/>
-  <object id="140" type="decor" gid="147" x="732.167" y="881.833" width="56" height="112"/>
-  <object id="141" type="decor" gid="147" x="820.167" y="859.833" width="56" height="112"/>
-  <object id="142" type="decor" gid="143" x="1360.17" y="645.833" width="64" height="60"/>
-  <object id="143" type="decor" gid="143" x="1490.17" y="473.833" width="64" height="60"/>
-  <object id="144" type="decor" gid="143" x="1426.17" y="921.833" width="64" height="60"/>
-  <object id="145" type="decor" gid="143" x="1512.17" y="751.833" width="64" height="60"/>
-  <object id="146" type="decor" gid="143" x="2096.17" y="889.833" width="64" height="60"/>
-  <object id="147" type="decor" gid="143" x="2424.17" y="649.833" width="64" height="60"/>
-  <object id="148" type="decor" gid="143" x="2164.17" y="461.833" width="64" height="60"/>
-  <object id="149" type="decor" gid="143" x="2286.17" y="417.833" width="64" height="60"/>
-  <object id="150" type="decor" gid="143" x="2350.17" y="1101.83" width="64" height="60"/>
-  <object id="151" type="decor" gid="143" x="2335.5" y="1684.5" width="64" height="60"/>
-  <object id="152" type="decor" gid="143" x="2472.17" y="1385.83" width="64" height="60"/>
-  <object id="153" type="decor" gid="143" x="2420.17" y="907.833" width="64" height="60"/>
-  <object id="154" type="decor" gid="143" x="1396.17" y="779.833" width="64" height="60"/>
-  <object id="155" type="decor" gid="143" x="2186.17" y="833.833" width="64" height="60"/>
-  <object id="156" type="decor" gid="143" x="1692.17" y="983.833" width="64" height="60"/>
-  <object id="157" type="decor" gid="150" x="1603.84" y="538.166" width="44" height="48"/>
-  <object id="158" type="decor" gid="150" x="1816.5" y="704.833" width="44" height="48"/>
-  <object id="159" type="decor" gid="150" x="2186.84" y="745.5" width="44" height="48"/>
-  <object id="160" type="decor" gid="150" x="2405.84" y="686.5" width="44" height="48"/>
-  <object id="161" type="decor" gid="150" x="2393.17" y="1120.83" width="44" height="48"/>
-  <object id="162" type="decor" gid="150" x="2502.5" y="1418.5" width="44" height="48"/>
-  <object id="163" type="decor" gid="150" x="2390.17" y="1642.16" width="44" height="48"/>
-  <object id="164" type="decor" gid="151" x="2469.84" y="1165.5" width="40" height="44"/>
-  <object id="165" type="decor" gid="151" x="1917" y="748.833" width="40" height="44"/>
-  <object id="166" type="decor" gid="152" x="1942.17" y="808" width="52" height="52"/>
-  <object id="167" type="decor" gid="151" x="1995.5" y="461.833" width="40" height="44"/>
-  <object id="168" type="decor" gid="151" x="1437.84" y="405.833" width="40" height="44"/>
-  <object id="169" type="decor" gid="151" x="1416.17" y="524.5" width="40" height="44"/>
-  <object id="170" type="decor" gid="151" x="1491.5" y="774.833" width="40" height="44"/>
-  <object id="171" type="decor" gid="151" x="1728.84" y="585.833" width="40" height="44"/>
-  <object id="172" type="decor" gid="152" x="2353.17" y="557.166" width="52" height="52"/>
-  <object id="173" type="decor" gid="150" x="745.167" y="979.833" width="44" height="48"/>
-  <object id="174" type="decor" gid="150" x="1292.17" y="975.833" width="44" height="48"/>
-  <object id="175" type="decor" gid="151" x="1615.17" y="910.833" width="40" height="44"/>
-  <object id="176" type="decor" gid="152" x="2373.17" y="1261.83" width="52" height="52"/>
-  <object id="177" type="decor" gid="152" x="2502.17" y="1546.83" width="52" height="52"/>
-  <object id="178" type="decor" gid="151" x="2515.17" y="1992.83" width="40" height="44"/>
-  <object id="211" type="decor" gid="143" x="1752" y="624.667" width="64" height="60"/>
+  <object id="139" class="decor" gid="147" x="650.167" y="1025.83" width="56" height="112"/>
+  <object id="140" class="decor" gid="147" x="732.167" y="881.833" width="56" height="112"/>
+  <object id="141" class="decor" gid="147" x="820.167" y="859.833" width="56" height="112"/>
+  <object id="142" class="decor" gid="143" x="1360.17" y="645.833" width="64" height="60"/>
+  <object id="143" class="decor" gid="143" x="1490.17" y="473.833" width="64" height="60"/>
+  <object id="144" class="decor" gid="143" x="1426.17" y="921.833" width="64" height="60"/>
+  <object id="145" class="decor" gid="143" x="1512.17" y="751.833" width="64" height="60"/>
+  <object id="146" class="decor" gid="143" x="2096.17" y="889.833" width="64" height="60"/>
+  <object id="147" class="decor" gid="143" x="2424.17" y="649.833" width="64" height="60"/>
+  <object id="148" class="decor" gid="143" x="2164.17" y="461.833" width="64" height="60"/>
+  <object id="149" class="decor" gid="143" x="2286.17" y="417.833" width="64" height="60"/>
+  <object id="150" class="decor" gid="143" x="2350.17" y="1101.83" width="64" height="60"/>
+  <object id="151" class="decor" gid="143" x="2335.5" y="1684.5" width="64" height="60"/>
+  <object id="152" class="decor" gid="143" x="2472.17" y="1385.83" width="64" height="60"/>
+  <object id="153" class="decor" gid="143" x="2420.17" y="907.833" width="64" height="60"/>
+  <object id="154" class="decor" gid="143" x="1396.17" y="779.833" width="64" height="60"/>
+  <object id="155" class="decor" gid="143" x="2186.17" y="833.833" width="64" height="60"/>
+  <object id="156" class="decor" gid="143" x="1692.17" y="983.833" width="64" height="60"/>
+  <object id="157" class="decor" gid="150" x="1603.84" y="538.166" width="44" height="48"/>
+  <object id="158" class="decor" gid="150" x="1816.5" y="704.833" width="44" height="48"/>
+  <object id="159" class="decor" gid="150" x="2186.84" y="745.5" width="44" height="48"/>
+  <object id="160" class="decor" gid="150" x="2405.84" y="686.5" width="44" height="48"/>
+  <object id="161" class="decor" gid="150" x="2393.17" y="1120.83" width="44" height="48"/>
+  <object id="162" class="decor" gid="150" x="2502.5" y="1418.5" width="44" height="48"/>
+  <object id="163" class="decor" gid="150" x="2390.17" y="1642.16" width="44" height="48"/>
+  <object id="164" class="decor" gid="151" x="2469.84" y="1165.5" width="40" height="44"/>
+  <object id="165" class="decor" gid="151" x="1917" y="748.833" width="40" height="44"/>
+  <object id="166" class="decor" gid="152" x="1942.17" y="808" width="52" height="52"/>
+  <object id="167" class="decor" gid="151" x="1995.5" y="461.833" width="40" height="44"/>
+  <object id="168" class="decor" gid="151" x="1437.84" y="405.833" width="40" height="44"/>
+  <object id="169" class="decor" gid="151" x="1416.17" y="524.5" width="40" height="44"/>
+  <object id="170" class="decor" gid="151" x="1491.5" y="774.833" width="40" height="44"/>
+  <object id="171" class="decor" gid="151" x="1728.84" y="585.833" width="40" height="44"/>
+  <object id="172" class="decor" gid="152" x="2353.17" y="557.166" width="52" height="52"/>
+  <object id="173" class="decor" gid="150" x="745.167" y="979.833" width="44" height="48"/>
+  <object id="174" class="decor" gid="150" x="1292.17" y="975.833" width="44" height="48"/>
+  <object id="175" class="decor" gid="151" x="1615.17" y="910.833" width="40" height="44"/>
+  <object id="176" class="decor" gid="152" x="2373.17" y="1261.83" width="52" height="52"/>
+  <object id="177" class="decor" gid="152" x="2502.17" y="1546.83" width="52" height="52"/>
+  <object id="178" class="decor" gid="151" x="2515.17" y="1992.83" width="40" height="44"/>
+  <object id="211" class="decor" gid="143" x="1752" y="624.667" width="64" height="60"/>
   <object id="252" gid="147" x="555" y="840" width="56" height="112"/>
   <object id="255" gid="143" x="2052" y="819.333" width="64" height="60"/>
   <object id="257" gid="147" x="826" y="446" width="56" height="112"/>
@@ -610,7 +610,7 @@
   <object id="78" gid="149" x="1746" y="622" width="56" height="116" visible="0"/>
   <object id="95" gid="144" x="962" y="442" width="56" height="68"/>
  </objectgroup>
- <layer id="14" name="Collision" width="50" height="40" visible="0">
+ <layer id="14" name="Collision" width="50" height="40">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
