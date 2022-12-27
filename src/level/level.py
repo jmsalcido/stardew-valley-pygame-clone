@@ -27,12 +27,15 @@ class Level:
             'Water': {'layer': 'water', 'class': Water},
             'Decoration': {'type': 'object', 'layer': 'main', 'class': WildFlower, 'collision': True},
             'Trees': {'type': 'object', 'layer': 'main', 'class': Tree, 'collision': True},
+            'Collision': {'layer': 'main', 'class': Generic, 'collision': True, 'collision_only': True},
         }
 
         tmx_data = load_pygame('../data/map.tmx')
 
         for tmx_layer, layer_info in layers.items():
-            sprite_group = [self.all_sprites, ]
+            sprite_group = []
+            if not layer_info.get('collision_only'):
+                sprite_group.append(self.all_sprites)
             if layer_info.get('collision'):
                 sprite_group.append(self.collision_sprites)
             if layer_info.get('type') == 'object':
@@ -44,7 +47,9 @@ class Level:
                     LevelSpriteFactory.create(layer_info.get('class'), x, y, surface, sprite_group,
                                               settings.LAYERS[layer_info.get('layer')], )
 
-        self.player = Player((1000, 1000), self.all_sprites, self.collision_sprites)
+        for obj in tmx_data.get_layer_by_name('Player'):
+            if obj.name == 'Start':
+                self.player = Player((obj.x, obj.y), self.all_sprites, self.collision_sprites)
         self.overlay = Overlay(self.player)
 
         ground = Generic(pos=(0, 0),
@@ -76,7 +81,7 @@ class CameraGroup(pygame.sprite.Group):
                     offset_rect = sprite.rect.copy()
                     offset_rect.center -= self.offset
                     self.display_surface.blit(sprite.image, offset_rect)
-                    if getattr(sprite, 'hitbox', None) is not None:
+                    if getattr(sprite, 'hitbox', None) is not None and settings.DEBUG:
                         hitbox = pygame.Surface(sprite.hitbox.size)
                         hitbox.fill('red')
                         self.display_surface.blit(hitbox, offset_rect)
