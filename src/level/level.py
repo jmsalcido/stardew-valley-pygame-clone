@@ -4,6 +4,7 @@ import pygame
 from pytmx.util_pygame import load_pygame
 
 from src import settings
+from src.level.soil import SoilLayer
 from src.level.transition import DayTransition
 from src.overlay import Overlay
 from src.player import Player, PlayerInventoryManager
@@ -26,6 +27,7 @@ class Level:
         self.transition = None
         self.overlay = None
         self._bed = None
+        self.soil_layer = SoilLayer(self.all_sprites)
         self.setup()
 
     def setup(self):
@@ -74,7 +76,8 @@ class Level:
                     all_sprites=self.all_sprites,
                     collision_group=self.collision_sprites,
                     interaction_group=self.interaction_sprites,
-                    trees_group=self.tree_sprites)
+                    trees_group=self.tree_sprites,
+                    soil_layer=self.soil_layer)
                 self._player_inventory_manager.add_player(self.player)
             elif obj.name == 'Bed':
                 self._bed = Interaction((obj.x, obj.y),

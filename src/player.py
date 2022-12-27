@@ -3,12 +3,13 @@ from typing import Optional
 import pygame
 
 from src import settings
+from src.level.soil import SoilLayer
 from src.support import import_folder
 from src.timer import Timer
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, all_sprites, collision_group, trees_group, interaction_group) -> None:
+    def __init__(self, pos, all_sprites, collision_group, trees_group, interaction_group, soil_layer) -> None:
         super().__init__(all_sprites)
 
         self.animations = {'up': [], 'down': [], 'left': [], 'right': [],
@@ -55,13 +56,14 @@ class Player(pygame.sprite.Sprite):
         self.selected_seed = self.seeds[self.seed_index]
 
         self.trees_group = trees_group
+        self.soil_layer: SoilLayer = soil_layer
 
         self.sleep = False
         self.target_pos = None
 
     def use_tool(self):
         if self.selected_tool == 'hoe':
-            pass
+            self.soil_layer.get_hit(self.target_pos)
         elif self.selected_tool == 'axe':
             for tree in self.trees_group.sprites():
                 if tree.rect.collidepoint(self.target_pos):
