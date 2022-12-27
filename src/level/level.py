@@ -4,9 +4,10 @@ import pygame
 from pytmx.util_pygame import load_pygame
 
 from src import settings
+from src.level.transition import DayTransition
 from src.overlay import Overlay
 from src.player import Player, PlayerInventoryManager
-from src.sprites import Generic, Water, LevelSpriteFactory, WildFlower, Tree
+from src.sprites import Generic, Water, LevelSpriteFactory, WildFlower, Tree, Interaction
 
 
 class Level:
@@ -19,8 +20,12 @@ class Level:
         self.all_sprites = CameraGroup()
         self.collision_sprites = pygame.sprite.Group()
         self.tree_sprites = pygame.sprite.Group()
-        self.player: Optional[Player] = None
+        self.interaction_sprites = pygame.sprite.Group()
 
+        self.player: Optional[Player] = None
+        self.transition = None
+        self.overlay = None
+        self._bed = None
         self.setup()
 
     def setup(self):
@@ -68,8 +73,16 @@ class Level:
                     pos=(obj.x, obj.y),
                     all_sprites=self.all_sprites,
                     collision_group=self.collision_sprites,
+                    interaction_group=self.interaction_sprites,
                     trees_group=self.tree_sprites)
                 self._player_inventory_manager.add_player(self.player)
+            elif obj.name == 'Bed':
+                self._bed = Interaction((obj.x, obj.y),
+                                        (obj.width, obj.height),
+                                        groups=(self.interaction_sprites,),
+                                        name='Bed',
+                                        transition=DayTransition(self.reset, self.player))
+                self.interaction_sprites.add(self._bed)
         self.overlay = Overlay(self.player)
 
         ground = Generic(pos=(0, 0),
@@ -78,6 +91,13 @@ class Level:
                          z=settings.LAYERS['ground'])
         ground.hitbox = None
 
+    def reset(self):
+        tree: Tree
+        for tree in self.tree_sprites.sprites():
+            for apple in tree.apple_sprites.sprites():
+                apple.kill()
+            tree.create_fruit()
+
     def run(self, dt):
         self.display_surface.fill('black')
         self.all_sprites.custom_draw(self.player)
@@ -85,7 +105,8 @@ class Level:
 
         self.overlay.display()
 
-        print(self.player.item_inventory)
+        if self.player.sleep:
+            self._bed.transition.update()
 
 
 class CameraGroup(pygame.sprite.Group):
@@ -99,6 +120,7 @@ class CameraGroup(pygame.sprite.Group):
         self.offset.x = player.rect.centerx - settings.SCREEN_WIDTH / 2
         self.offset.y = player.rect.centery - settings.SCREEN_HEIGHT / 2
         for layer in settings.LAYERS.values():
+            sprite: Generic
             for sprite in sorted(self.sprites(), key=lambda _sprite: _sprite.rect.centery):
                 if sprite.z == layer:
                     sprite_offset_rect = sprite.rect.copy()

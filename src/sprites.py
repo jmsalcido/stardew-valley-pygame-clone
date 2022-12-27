@@ -126,6 +126,15 @@ class Water(Generic):
         self.animate(dt)
 
 
+class Interaction(Generic):
+
+    def __init__(self, pos, size, groups=None, z=settings.LAYERS['main'], name=None, transition=None) -> None:
+        surface = pygame.Surface(size)
+        super().__init__(pos, surface, groups, z)
+        self.name = name
+        self.transition = transition
+
+
 class LevelSpriteFactory:
     @staticmethod
     def create(clazz, x, y, surface, groups, z, **kwargs):
@@ -138,5 +147,7 @@ class LevelSpriteFactory:
             return WildFlower((x, y), surface, groups=groups, z=z)
         elif clazz == Tree:
             return Tree((x, y), surface, groups=groups, z=z, **kwargs)
+        elif clazz == Interaction:
+            return Interaction((x, y), 100, **kwargs)
         else:
             raise Exception(f"There is no class for: {clazz}")

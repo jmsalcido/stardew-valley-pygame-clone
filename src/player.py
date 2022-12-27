@@ -3,13 +3,19 @@ from typing import Optional
 import pygame
 
 from src import settings
-from src.timer import Timer
 from src.support import import_folder
+from src.timer import Timer
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, all_sprites, collision_group, trees_group) -> None:
+    def __init__(self, pos, all_sprites, collision_group, trees_group, interaction_group) -> None:
         super().__init__(all_sprites)
+
+        self.animations = {'up': [], 'down': [], 'left': [], 'right': [],
+                           'right_idle': [], 'left_idle': [], 'up_idle': [], 'down_idle': [],
+                           'right_hoe': [], 'left_hoe': [], 'up_hoe': [], 'down_hoe': [],
+                           'right_axe': [], 'left_axe': [], 'up_axe': [], 'down_axe': [],
+                           'right_water': [], 'left_water': [], 'up_water': [], 'down_water': []}
 
         self.import_assets()
         self.status = 'down_idle'
@@ -25,6 +31,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = 200
 
         self.collision_group = collision_group
+        self.interaction_group = interaction_group
 
         self.tools = ['hoe', 'axe', 'water']
         self.tool_index = 0
@@ -33,7 +40,7 @@ class Player(pygame.sprite.Sprite):
             'tool_use': Timer(350, self.use_tool),
             'tool_switch': Timer(200, self.switch_tool),
             'seed_use': Timer(350, self.use_seed),
-            'seed_switch': Timer(200, self.switch_seed)
+            'seed_switch': Timer(200, self.switch_seed),
         }
 
         self.item_inventory = {
@@ -48,6 +55,9 @@ class Player(pygame.sprite.Sprite):
         self.selected_seed = self.seeds[self.seed_index]
 
         self.trees_group = trees_group
+
+        self.sleep = False
+        self.target_pos = None
 
     def use_tool(self):
         if self.selected_tool == 'hoe':
@@ -82,12 +92,6 @@ class Player(pygame.sprite.Sprite):
             timer.update()
 
     def import_assets(self):
-        self.animations = {'up': [], 'down': [], 'left': [], 'right': [],
-                           'right_idle': [], 'left_idle': [], 'up_idle': [], 'down_idle': [],
-                           'right_hoe': [], 'left_hoe': [], 'up_hoe': [], 'down_hoe': [],
-                           'right_axe': [], 'left_axe': [], 'up_axe': [], 'down_axe': [],
-                           'right_water': [], 'left_water': [], 'up_water': [], 'down_water': []}
-
         for animation in self.animations.keys():
             full_path = '../graphics/character/' + animation
             self.animations[animation] = import_folder(full_path)
@@ -102,7 +106,7 @@ class Player(pygame.sprite.Sprite):
     def input(self):
         keys = pygame.key.get_pressed()
 
-        if self.timers['tool_use'].active:
+        if self.timers['tool_use'].active or self.sleep:
             return
 
         if keys[pygame.K_UP]:
@@ -142,6 +146,21 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_e]:
             if not self.timers['seed_switch'].active:
                 self.timers['seed_switch'].activate()
+
+        if keys[pygame.K_RETURN]:
+            collided_interaction = pygame.sprite.spritecollide(sprite=self,
+                                                               group=self.interaction_group,
+                                                               dokill=False)
+            if collided_interaction:
+                collision = collided_interaction[0]
+                collision_name = getattr(collision, 'name', None)
+                if collision_name == 'Trader':
+                    pass
+                elif collision_name == 'Bed':
+                    if not self.sleep and hasattr(collision, 'transition'):
+                        collision.transition.start()
+                        self.status = 'left_idle'
+                        self.sleep = True
 
     def get_status(self):
         if self.direction.magnitude() == 0:
