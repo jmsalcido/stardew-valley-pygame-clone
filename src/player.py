@@ -6,8 +6,8 @@ from src.support import import_folder
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, group, collision_group) -> None:
-        super().__init__(group)
+    def __init__(self, pos, all_sprites, collision_group, trees_group) -> None:
+        super().__init__(all_sprites)
 
         self.import_assets()
         self.status = 'down_idle'
@@ -38,8 +38,20 @@ class Player(pygame.sprite.Sprite):
         self.seed_index = 0
         self.selected_seed = self.seeds[self.seed_index]
 
+        self.trees_group = trees_group
+
     def use_tool(self):
-        pass
+        if self.selected_tool == 'hoe':
+            pass
+        elif self.selected_tool == 'axe':
+            for tree in self.trees_group.sprites():
+                if tree.rect.collidepoint(self.target_pos):
+                    tree.damage()
+        elif self.selected_tool == 'water':
+            pass
+
+    def get_target_pos(self):
+        self.target_pos = self.rect.center + settings.PLAYER_TOOL_OFFSET[self.status.split("_")[0]]
 
     def use_seed(self):
         print(self.selected_seed)
@@ -82,7 +94,7 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
 
         if self.timers['tool_use'].active:
-            pass
+            return
 
         if keys[pygame.K_UP]:
             self.status = 'up'
@@ -170,3 +182,4 @@ class Player(pygame.sprite.Sprite):
         self.move(dt)
         self.animate(dt)
         self.update_timers()
+        self.get_target_pos()

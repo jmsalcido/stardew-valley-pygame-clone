@@ -5,7 +5,7 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 TILE_SIZE = 64
 
-DEBUG = True
+DEBUG = False
 
 # overlay positions 
 OVERLAY_POSITIONS = {

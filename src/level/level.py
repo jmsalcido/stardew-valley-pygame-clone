@@ -15,6 +15,8 @@ class Level:
         # sprite groups
         self.all_sprites = CameraGroup()
         self.collision_sprites = pygame.sprite.Group()
+        self.tree_sprites = pygame.sprite.Group()
+
         self.setup()
 
     def setup(self):
@@ -40,8 +42,11 @@ class Level:
                 sprite_group.append(self.collision_sprites)
             if layer_info.get('type') == 'object':
                 for obj in tmx_data.get_layer_by_name(tmx_layer):
-                    LevelSpriteFactory.create(layer_info.get('class'), obj.x, obj.y, obj.image, sprite_group,
-                                              settings.LAYERS[layer_info.get('layer')], name=obj.name, )
+                    sprite = LevelSpriteFactory.create(layer_info.get('class'), obj.x, obj.y, obj.image, sprite_group,
+                                                       settings.LAYERS[layer_info.get('layer')], name=obj.name, )
+
+                    if tmx_layer == 'Trees':
+                        self.tree_sprites.add(sprite)
             else:
                 for x, y, surface in tmx_data.get_layer_by_name(tmx_layer).tiles():
                     LevelSpriteFactory.create(layer_info.get('class'), x, y, surface, sprite_group,
@@ -49,13 +54,17 @@ class Level:
 
         for obj in tmx_data.get_layer_by_name('Player'):
             if obj.name == 'Start':
-                self.player = Player((obj.x, obj.y), self.all_sprites, self.collision_sprites)
+                self.player = Player(
+                    pos=(obj.x, obj.y),
+                    all_sprites=self.all_sprites,
+                    collision_group=self.collision_sprites,
+                    trees_group=self.tree_sprites)
         self.overlay = Overlay(self.player)
 
         ground = Generic(pos=(0, 0),
-                surface=pygame.image.load('../graphics/world/ground.png').convert_alpha(),
-                groups=(self.all_sprites,),
-                z=settings.LAYERS['ground'])
+                         surface=pygame.image.load('../graphics/world/ground.png').convert_alpha(),
+                         groups=(self.all_sprites,),
+                         z=settings.LAYERS['ground'])
         ground.hitbox = None
 
     def run(self, dt):
@@ -78,10 +87,23 @@ class CameraGroup(pygame.sprite.Group):
         for layer in settings.LAYERS.values():
             for sprite in sorted(self.sprites(), key=lambda _sprite: _sprite.rect.centery):
                 if sprite.z == layer:
-                    offset_rect = sprite.rect.copy()
-                    offset_rect.center -= self.offset
-                    self.display_surface.blit(sprite.image, offset_rect)
-                    if getattr(sprite, 'hitbox', None) is not None and settings.DEBUG:
-                        hitbox = pygame.Surface(sprite.hitbox.size)
-                        hitbox.fill('red')
-                        self.display_surface.blit(hitbox, offset_rect)
+                    sprite_offset_rect = sprite.rect.copy()
+                    sprite_offset_rect.center -= self.offset
+                    self.display_surface.blit(sprite.image, sprite_offset_rect)
+
+                    if settings.DEBUG:
+                        # print collision boxes
+                        if getattr(sprite, 'hitbox', None) is not None:
+                            pygame.draw.rect(self.display_surface, 'red', sprite_offset_rect, 5)
+                            hitbox_rect = sprite.hitbox.copy()
+                            hitbox_rect.center = sprite_offset_rect.center
+                            pygame.draw.rect(self.display_surface, 'green', hitbox_rect, 5)
+
+                        if sprite == player:
+                            pygame.draw.rect(self.display_surface, 'red', sprite_offset_rect, 5)
+                            hitbox_rect = player.hitbox.copy()
+                            hitbox_rect.center = sprite_offset_rect.center
+                            pygame.draw.rect(self.display_surface, 'green', hitbox_rect, 5)
+                            target_pos = sprite_offset_rect.center + settings.PLAYER_TOOL_OFFSET[
+                                player.status.split("_")[0]]
+                            pygame.draw.circle(self.display_surface, 'blue', target_pos, 2)
