@@ -2,6 +2,7 @@ import sys
 import pygame
 
 from src.level import Level
+from src.player import PlayerInventoryManager
 from src.settings import *
 
 
@@ -11,7 +12,8 @@ class Game:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption('Pydew Valley')
         self.clock = pygame.time.Clock()
-        self.level = Level()
+        self._player_inventory_manager = PlayerInventoryManager()
+        self.level = Level(self._player_inventory_manager)
 
     def run(self):
         while True:

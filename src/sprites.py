@@ -1,9 +1,10 @@
+from enum import Enum
 from random import randint, choice
-from typing import Optional
 
 import pygame
 
 from src import settings
+from src.player import PlayerInventoryManager
 from src.support import game_tile_pos_tuple, import_folder
 from src.timer import Timer
 
@@ -43,9 +44,15 @@ class Particle(Generic):
             self.kill()
 
 
+class TreeType(Enum):
+    SMALL = 0,
+    LARGE = 1
+
+
 class Tree(Generic):
 
-    def __init__(self, pos, surface, groups, z=settings.LAYERS['main'], name=None) -> None:
+    def __init__(self, pos, surface, groups, z=settings.LAYERS['main'], name=None,
+                 player_inventory_manager=None) -> None:
         super().__init__(pos, surface, groups, z)
         self.all_sprites = self.groups()[0]
         self.health = 5
@@ -58,9 +65,12 @@ class Tree(Generic):
         self.apple_sprites = pygame.sprite.Group()
         self.create_fruit()
 
-        stump_path = f'../graphics/stumps/{"small.png" if name == "Small" else "large.png"}'
+        self._tree_type: TreeType = TreeType.SMALL if name == 'Small' else TreeType.LARGE
+        stump_path = f'../graphics/stumps/{"small.png" if self._tree_type == TreeType.SMALL else "large.png"}'
         self.stump_surface = pygame.image.load(stump_path)
         self.invul_timer = Timer(200)
+
+        self._player_inventory_manager: PlayerInventoryManager = player_inventory_manager
 
     def damage(self):
         self.health -= 1
@@ -70,9 +80,14 @@ class Tree(Generic):
             random_apple = choice(apple_sprites)
             Particle(random_apple.rect.topleft, random_apple.image, (self.all_sprites,), z=settings.LAYERS['fruit'])
             random_apple.kill()
+            self._player_inventory_manager.add_to_inventory('apple')
 
     def check_health(self):
         if self.health <= 0:
+            if self._tree_type == TreeType.SMALL:
+                self._player_inventory_manager.add_to_inventory('wood', 3)
+            elif self._tree_type == TreeType.LARGE:
+                self._player_inventory_manager.add_to_inventory('wood', 5)
             self.alive = False
             Particle(self.rect.topleft, self.image, (self.all_sprites,), z=settings.LAYERS['fruit'], duration=300)
             self.image = self.stump_surface

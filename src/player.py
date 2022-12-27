@@ -1,3 +1,5 @@
+from typing import Optional
+
 import pygame
 
 from src import settings
@@ -32,6 +34,13 @@ class Player(pygame.sprite.Sprite):
             'tool_switch': Timer(200, self.switch_tool),
             'seed_use': Timer(350, self.use_seed),
             'seed_switch': Timer(200, self.switch_seed)
+        }
+
+        self.item_inventory = {
+            'wood': 0,
+            'apple': 0,
+            'corn': 0,
+            'tomato': 0,
         }
 
         self.seeds = ['corn', 'tomato']
@@ -175,7 +184,6 @@ class Player(pygame.sprite.Sprite):
                         self.rect.centery = self.hitbox.centery
                         self.pos.y = self.hitbox.centery
 
-
     def update(self, dt):
         self.input()
         self.get_status()
@@ -183,3 +191,20 @@ class Player(pygame.sprite.Sprite):
         self.animate(dt)
         self.update_timers()
         self.get_target_pos()
+
+
+class PlayerInventoryManager:
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._player: Optional[Player] = None
+
+    def add_player(self, player: Player):
+        self._player = player
+
+    def add_to_inventory(self, item, quantity=1):
+        if self._player is not None:
+            self._player.item_inventory[item] += quantity
+
+    def inventory(self):
+        return self._player.item_inventory

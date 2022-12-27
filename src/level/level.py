@@ -1,14 +1,17 @@
+from typing import Optional
+
 import pygame
 from pytmx.util_pygame import load_pygame
 
 from src import settings
 from src.overlay import Overlay
-from src.player import Player
+from src.player import Player, PlayerInventoryManager
 from src.sprites import Generic, Water, LevelSpriteFactory, WildFlower, Tree
 
 
 class Level:
-    def __init__(self):
+    def __init__(self, player_inventory_manager: PlayerInventoryManager):
+        self._player_inventory_manager = player_inventory_manager
         # get the display surface
         self.display_surface = pygame.display.get_surface()
 
@@ -16,6 +19,7 @@ class Level:
         self.all_sprites = CameraGroup()
         self.collision_sprites = pygame.sprite.Group()
         self.tree_sprites = pygame.sprite.Group()
+        self.player: Optional[Player] = None
 
         self.setup()
 
@@ -42,8 +46,14 @@ class Level:
                 sprite_group.append(self.collision_sprites)
             if layer_info.get('type') == 'object':
                 for obj in tmx_data.get_layer_by_name(tmx_layer):
-                    sprite = LevelSpriteFactory.create(layer_info.get('class'), obj.x, obj.y, obj.image, sprite_group,
-                                                       settings.LAYERS[layer_info.get('layer')], name=obj.name, )
+                    sprite = LevelSpriteFactory.create(layer_info.get('class'),
+                                                       obj.x,
+                                                       obj.y,
+                                                       obj.image,
+                                                       sprite_group,
+                                                       settings.LAYERS[layer_info.get('layer')],
+                                                       name=obj.name,
+                                                       player_inventory_manager=self._player_inventory_manager)
 
                     if tmx_layer == 'Trees':
                         self.tree_sprites.add(sprite)
@@ -59,6 +69,7 @@ class Level:
                     all_sprites=self.all_sprites,
                     collision_group=self.collision_sprites,
                     trees_group=self.tree_sprites)
+                self._player_inventory_manager.add_player(self.player)
         self.overlay = Overlay(self.player)
 
         ground = Generic(pos=(0, 0),
@@ -71,7 +82,10 @@ class Level:
         self.display_surface.fill('black')
         self.all_sprites.custom_draw(self.player)
         self.all_sprites.update(dt)
+
         self.overlay.display()
+
+        print(self.player.item_inventory)
 
 
 class CameraGroup(pygame.sprite.Group):
