@@ -11,7 +11,7 @@ class DayTransition:
         self._display_surface = pygame.display.get_surface()
         self._player = player
         self._reset = reset
-        self._timer = Timer(2000, self.stop)
+        self._timer = Timer(2500, self.stop)
 
         self._image = None
         self._color = 255
@@ -20,7 +20,7 @@ class DayTransition:
     def start(self):
         self._image = pygame.Surface((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT))
         self._color = 255
-        self._speed = -1
+        self._speed = -2
         self._timer.activate()
 
     def stop(self):
@@ -35,6 +35,6 @@ class DayTransition:
             self._speed *= -1
         if self._color >= 255:
             self._color = 255
-            self._speed = -1
+            self._speed = -2
         self._image.fill((self._color, self._color, self._color))
-        self._display_surface.blit(self._image, (0, 0))
+        self._display_surface.blit(self._image, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
