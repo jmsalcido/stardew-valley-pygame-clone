@@ -4,7 +4,7 @@ from pytmx.util_pygame import load_pygame
 from src import settings
 from src.overlay import Overlay
 from src.player import Player
-from src.sprites import Generic, Water, LevelSpriteFactory, WildFlower
+from src.sprites import Generic, Water, LevelSpriteFactory, WildFlower, Tree
 
 
 class Level:
@@ -14,6 +14,7 @@ class Level:
 
         # sprite groups
         self.all_sprites = CameraGroup()
+        self.collision_sprites = pygame.sprite.Group()
         self.setup()
 
     def setup(self):
@@ -22,31 +23,35 @@ class Level:
             'HouseFurnitureBottom': {'layer': 'house bottom', 'class': Generic},
             'HouseWalls': {'layer': 'main', 'class': Generic},
             'HouseFurnitureTop': {'layer': 'main', 'class': Generic},
-            'Fence': {'layer': 'main', 'class': Generic},
+            'Fence': {'layer': 'main', 'class': Generic, 'collision': True},
             'Water': {'layer': 'water', 'class': Water},
-            'Decoration': {'type': 'object', 'layer': 'main', 'class': WildFlower},
-            'Trees': {'type': 'object', 'layer': 'main', 'class': WildFlower},
+            'Decoration': {'type': 'object', 'layer': 'main', 'class': WildFlower, 'collision': True},
+            'Trees': {'type': 'object', 'layer': 'main', 'class': Tree, 'collision': True},
         }
 
         tmx_data = load_pygame('../data/map.tmx')
 
         for tmx_layer, layer_info in layers.items():
+            sprite_group = [self.all_sprites, ]
+            if layer_info.get('collision'):
+                sprite_group.append(self.collision_sprites)
             if layer_info.get('type') == 'object':
                 for obj in tmx_data.get_layer_by_name(tmx_layer):
-                    LevelSpriteFactory.create(layer_info.get('class'), obj.x, obj.y, obj.image, (self.all_sprites,),
-                                              settings.LAYERS[layer_info.get('layer')], name=obj.name)
+                    LevelSpriteFactory.create(layer_info.get('class'), obj.x, obj.y, obj.image, sprite_group,
+                                              settings.LAYERS[layer_info.get('layer')], name=obj.name, )
             else:
                 for x, y, surface in tmx_data.get_layer_by_name(tmx_layer).tiles():
-                    LevelSpriteFactory.create(layer_info.get('class'), x, y, surface, (self.all_sprites,),
-                                              settings.LAYERS[layer_info.get('layer')])
+                    LevelSpriteFactory.create(layer_info.get('class'), x, y, surface, sprite_group,
+                                              settings.LAYERS[layer_info.get('layer')], )
 
-        self.player = Player((640, 360), self.all_sprites)
+        self.player = Player((1000, 1000), self.all_sprites, self.collision_sprites)
         self.overlay = Overlay(self.player)
 
-        Generic(pos=(0, 0),
+        ground = Generic(pos=(0, 0),
                 surface=pygame.image.load('../graphics/world/ground.png').convert_alpha(),
                 groups=(self.all_sprites,),
                 z=settings.LAYERS['ground'])
+        ground.hitbox = None
 
     def run(self, dt):
         self.display_surface.fill('black')
@@ -71,3 +76,7 @@ class CameraGroup(pygame.sprite.Group):
                     offset_rect = sprite.rect.copy()
                     offset_rect.center -= self.offset
                     self.display_surface.blit(sprite.image, offset_rect)
+                    if getattr(sprite, 'hitbox', None) is not None:
+                        hitbox = pygame.Surface(sprite.hitbox.size)
+                        hitbox.fill('red')
+                        self.display_surface.blit(hitbox, offset_rect)

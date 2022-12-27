@@ -1,3 +1,5 @@
+from typing import Optional
+
 import pygame
 
 from src import settings
@@ -11,12 +13,14 @@ class Generic(pygame.sprite.Sprite):
         self.image = surface
         self.rect = self.image.get_rect(topleft=pos)
         self.z = z
+        self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.2, -self.rect.height * 0.75)
 
 
 class WildFlower(Generic):
 
     def __init__(self, pos, surface, groups, z=settings.LAYERS['main']) -> None:
         super().__init__(pos, surface, groups, z)
+        self.hitbox = self.rect.copy().inflate(-20, -self.rect.height * 0.9)
 
 
 class Tree(Generic):
