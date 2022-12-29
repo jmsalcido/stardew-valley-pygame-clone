@@ -1,9 +1,9 @@
 import pygame.sprite
 import pytmx
 from pygame import Rect
-from pygame.sprite import AbstractGroup
 
 from src import settings
+from src.support import import_folder_dict
 
 
 class SoilTile(pygame.sprite.Sprite):
@@ -20,7 +20,8 @@ class SoilLayer:
         super().__init__()
         self.all_sprites = all_sprites
         self.soil_sprites = pygame.sprite.Group()
-        self.soil_surface = pygame.image.load('../graphics/soil/o.png')
+        self.soil_surfaces = import_folder_dict('../graphics/soil/')
+
         self.grid = None
         self.hit_rects = None
         self.create_soil_grid()
@@ -62,6 +63,35 @@ class SoilLayer:
         for index_row, row in enumerate(self.grid):
             for index_col, cell in enumerate(row):
                 if 'X' in cell:
+                    t = 'X' in self.grid[index_row - 1][index_col]
+                    b = 'X' in self.grid[index_row + 1][index_col]
+                    l = 'X' in row[index_col - 1]
+                    r = 'X' in row[index_col + 1]
+
+                    tile_type = 'o'
+
+                    tile_dict = {
+                        lambda: all((t, b, l, r)): 'x',
+                        lambda: l and not any((t, b, r)): 'r',
+                        lambda: r and not any((t, b, l)): 'l',
+                        lambda: r and l and not any((t, b)): 'lr',
+                        lambda: t and not any((l, b, r)): 'b',
+                        lambda: b and not any((l, t, r)): 't',
+                        lambda: b and t and not any((l, r)): 'tb',
+                        lambda: l and b and not any((t, r)): 'tr',
+                        lambda: r and b and not any((t, l)): 'tl',
+                        lambda: l and t and not any((b, r)): 'br',
+                        lambda: r and t and not any((b, l)): 'bl',
+                        lambda: all((t, b, r)) and not l: 'tbr',
+                        lambda: all((t, b, l)) and not r: 'tbl',
+                        lambda: all((l, r, t)) and not b: 'lrb',
+                        lambda: all((l, r, b)) and not t: 'lrt',
+                    }
+
+                    for predicate, tile_result in tile_dict.items():
+                        if predicate():
+                            tile_type = tile_result
+
                     x = index_col * settings.TILE_SIZE
                     y = index_row * settings.TILE_SIZE
-                    SoilTile((x, y), self.soil_surface, (self.all_sprites, self.soil_sprites,))
+                    SoilTile((x, y), self.soil_surfaces[tile_type], (self.all_sprites, self.soil_sprites,))
