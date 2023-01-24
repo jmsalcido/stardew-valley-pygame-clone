@@ -4,6 +4,7 @@ import pygame
 from pytmx.util_pygame import load_pygame
 
 from src import settings
+from src.level import Rain
 from src.level.soil import SoilLayer
 from src.level.transition import DayTransition
 from src.overlay import Overlay
@@ -22,6 +23,9 @@ class Level:
         self.collision_sprites = pygame.sprite.Group()
         self.tree_sprites = pygame.sprite.Group()
         self.interaction_sprites = pygame.sprite.Group()
+
+        self.rain = Rain(self.all_sprites)
+        self.raining = True
 
         self.player: Optional[Player] = None
         self.transition = None
@@ -107,6 +111,8 @@ class Level:
         self.display_surface.fill('black')
         self.all_sprites.custom_draw(self.player)
         self.all_sprites.update(dt)
+        if self.raining:
+            self.rain.update()
 
         self.overlay.display()
 
