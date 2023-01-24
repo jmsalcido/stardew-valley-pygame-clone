@@ -1,9 +1,12 @@
+from random import choice
+
 import pygame.sprite
 import pytmx
 from pygame import Rect
+from pygame.sprite import AbstractGroup
 
 from src import settings
-from src.support import import_folder_dict
+from src.support import import_folder_dict, import_folder
 
 
 class SoilTile(pygame.sprite.Sprite):
@@ -15,12 +18,24 @@ class SoilTile(pygame.sprite.Sprite):
         self.z = settings.LAYERS['soil']
 
 
+class WaterTile(pygame.sprite.Sprite):
+
+    def __init__(self, pos, surface, groups) -> None:
+        super().__init__(groups)
+        self.image = surface
+        self.rect = self.image.get_rect(topleft=pos)
+        self.z = settings.LAYERS['soil water']
+
+
 class SoilLayer:
     def __init__(self, all_sprites) -> None:
         super().__init__()
         self.all_sprites = all_sprites
         self.soil_sprites = pygame.sprite.Group()
         self.soil_surfaces = import_folder_dict('../graphics/soil/')
+
+        self.water_sprites = pygame.sprite.Group()
+        self.water_surfaces = import_folder('../graphics/soil_water/')
 
         self.grid = None
         self.hit_rects = None
@@ -57,6 +72,28 @@ class SoilLayer:
                 if 'F' in self.grid[y][x]:
                     self.grid[y][x].append('X')
                     self.create_soil_tiles()
+
+    def water(self, pos):
+        for soil_sprite in self.soil_sprites.sprites():
+            if soil_sprite.rect.collidepoint(pos):
+                # add entry to grid: W
+                x = soil_sprite.rect.x // settings.TILE_SIZE
+                y = soil_sprite.rect.y // settings.TILE_SIZE
+                self.grid[y][x].append('W')
+
+                # create water sprite
+                soil_pos = soil_sprite.rect.topleft
+                surface = choice(self.water_surfaces)
+                WaterTile(soil_pos, surface, (self.all_sprites, self.water_sprites,))
+
+    def remove_water(self):
+        for sprite in self.water_sprites.sprites():
+            sprite.kill()
+
+        for row in self.grid:
+            for cell in row:
+                if 'W' in cell:
+                    cell.remove('W')
 
     def create_soil_tiles(self):
         self.soil_sprites.empty()
